@@ -1,0 +1,13 @@
+{
+    "base_url": "https://mastodon.mit.edu",
+    "client_id": "0dd...65d",
+    "client_secret": "a7e...6b7",
+    "access_token": "9af...d33",
+
+    "message": "[robot voice] beep boop, this account isn't monitored regularly! forwarding this in a DM to our human maintainers, @aleksejs and @dukhovni.",
+    "forward_dms": ["aleksejs", "dukhovni"],
+
+    "ignored_senders": ["aleksejs", "dukhovni"],
+
+    "state_file": "/home/mastodon/autoresponder/state"
+}
