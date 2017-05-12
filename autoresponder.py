@@ -107,6 +107,10 @@ def run_bot(config):
                         # We received a public announcement from admins, we should boost it
                         api.status_reblog(notification['status']['id'])
                     else:
+                        if set(config.admins) & {account['acct'] for account in notification['status']['mentions']}:
+                            # An admin is already mentioned, no need to forward this message
+                            continue
+
                         response = '@{} {}'.format(
                             sender,
                             config.message)
