@@ -70,7 +70,10 @@ def run_bot(config):
     last_notification = -1
     if os.path.exists(config.state_file):
         with open(config.state_file) as f:
-            last_notification = int(f.read())
+            try:
+                last_notification = int(f.read())
+            except ValueError:
+                pass
 
     with open(config.state_file, 'a') as state_file:
         while True:
