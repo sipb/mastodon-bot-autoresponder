@@ -23,10 +23,8 @@ class Config:
         self.client_secret = json['client_secret']
         self.access_token = json['access_token']
 
-        self.message = json['message']
-        self.forward_dms = json['forward_dms']
-
-        self.ignored_senders = json['ignored_senders']
+        self.admins = json['admins']
+        self.message = json['message'] + ''.join(' @' + admin for admin in self.admins)
 
         self.state_file = json['state_file']
 
@@ -100,37 +98,40 @@ def run_bot(config):
 
                     sender = notification['status']['account']['acct']
 
-                    if sender in config.ignored_senders:
-                        continue
+                    if sender in config.admins:
+                        if notification['status']['visibility'] != 'public' :
+                            continue
+                        # We received a public announcement from admins, we should boost it
+                        api.status_reblog(notification['status']['id'])
+                    else:
+                        response = '@{} {}'.format(
+                            sender,
+                            config.message)
 
-                    response = '@{} {}'.format(
-                        sender,
-                        config.message)
+                        response_sent = api.status_post(response,
+                            in_reply_to_id=notification['status']['id'],
+                            visibility='direct')
 
-                    response_sent = api.status_post(response,
-                        in_reply_to_id=notification['status']['id'],
-                        visibility='direct')
+                        if ((notification['status']['visibility'] != 'public') and
+                           (len(config.admins) > 0)):
+                            # the bot was sent a DM, we should forward that too
+                            text = html_to_text(notification['status']['content'])
+                            text = sanitize_forwarded_toot(text)
 
-                    if ((notification['status']['visibility'] != 'public') and
-                       (len(config.forward_dms) > 0)):
-                        # the bot was sent a DM, we should forward that too
-                        text = html_to_text(notification['status']['content'])
-                        text = sanitize_forwarded_toot(text)
-
-                        recipient_prefix = ' '.join('@'+x for x in config.forward_dms + [sender])
-                        prev_part_id = response_sent['id']
-                        for part in split_into_toots(recipient_prefix, text):
-                            part_sent = api.status_post(part,
-                                in_reply_to_id=prev_part_id,
-                                visibility='direct')
-                            prev_part_id = part_sent['id']
+                            recipient_prefix = ' '.join('@'+x for x in config.admins + [sender])
+                            prev_part_id = response_sent['id']
+                            for part in split_into_toots(recipient_prefix, text):
+                                part_sent = api.status_post(part,
+                                    in_reply_to_id=prev_part_id,
+                                    visibility='direct')
+                                prev_part_id = part_sent['id']
 
                     print('Responded to status {} from {}.'.format(
                         notification['status']['id'],
                         notification['status']['account']['acct']))
 
                     last_notification = notification['id']
-                    config_changed = True
+                    ln_changed = True
 
 
             if ln_changed:

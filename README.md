@@ -6,10 +6,10 @@ The bot is written in Python 3 and uses [Mastodon.py](https://github.com/halcy/M
 
 The bot can do the following:
 
-- respond to every toot sent to it with a predefined message
+- respond to every toot sent to it by a non-admin with a predefined message mentioning the admins
     - regardless of the visibility setting of the response, the response is always sent as a DM. because of how DMs work, if the predefined message includes other peple's usernames, they'll also see the DM!
-- if it receives a DM, it can forward the text of that DM to a predefined set of recipients
-- it can be configured to ignore certain senders
+- if it receives a DM from a non-admin, it can forward the text of that DM to the admins
+- it can boost public announcement toots by admins that mention it
 
 The bot will not respond retroactively, i.e., the first time you run it, it will not respond to all the messages your account has received in the past.
 
@@ -24,16 +24,14 @@ The bot is configured in a JSON file that looks like this:
     "client_secret": "a7e...6b7",
     "access_token": "9af...d33",
 
-    "message": "[robot voice] beep boop, this account isn't monitored regularly! forwarding this in a DM to our human maintainers, @aleksejs and @dukhovni.",
-    "forward_dms": ["aleksejs", "dukhovni"],
-
-    "ignored_senders": ["aleksejs", "dukhovni"],
+    "message": "[robot voice] beep boop, this account isn't monitored regularly! forwarding this in a DM to our human maintainers:",
+    "admins": ["aleksejs", "dukhovni"],
 
     "state_file": "/home/mastodon/autoresponder/state"
 }
 ```
 
-All keys are mandatory. The first group contains information about connecting to the API and authenticating to it. The second group contains the autoresponder message and the usernames of the people who should receive forwarded DMs (this can be empty). The third group contains the list of ignored senders (this can be empty). The last group contains the path to the state file, which contains informations that lets the bot remember which messages it's already replied to (this cannot be empty, but the file doesn't have to exist the first time you run the bot).
+All keys are mandatory. The first group contains information about connecting to the API and authenticating to it. The second group contains the autoresponder message and the usernames of the admins. The last group contains the path to the state file, which contains informations that lets the bot remember which messages it's already replied to (this cannot be empty, but the file doesn't have to exist the first time you run the bot).
 
 # Installation
 
