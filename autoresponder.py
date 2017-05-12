@@ -138,6 +138,7 @@ def run_bot(config):
                 state_file.seek(0)
                 state_file.truncate(0)
                 state_file.write(str(last_notification))
+                state_file.flush()
 
             time.sleep(60)
 
