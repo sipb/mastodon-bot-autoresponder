@@ -87,14 +87,14 @@ def run_bot(config):
                 # if this is the first time the bot is running, don't autorespond
                 # retroactively
                 if len(notifications) > 0:
-                    last_notification = notifications[0]['id']
+                    last_notification = int(notifications[0]['id'])
                 else:
                     last_notification = 0
                 ln_changed = True
             else:
                 # reversed order to process notification in chronological order
                 for notification in notifications[::-1]:
-                    if notification['id'] <= last_notification:
+                    if int(notification['id']) <= last_notification:
                         continue
                     if notification['type'] != 'mention':
                         continue
@@ -137,7 +137,7 @@ def run_bot(config):
                         notification['status']['id'],
                         notification['status']['account']['acct']))
 
-                    last_notification = notification['id']
+                    last_notification = int(notification['id'])
                     ln_changed = True
 
 
