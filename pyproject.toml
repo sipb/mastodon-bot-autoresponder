@@ -1,0 +1,20 @@
+[project]
+name = "mastodon-bot-autoresponder"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "mastodon-py>=2.1.4",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["autoresponder", "tokentool"]
+
+[project.scripts]
+autoresponder = "autoresponder:main"
+tokentool = "tokentool:main"
