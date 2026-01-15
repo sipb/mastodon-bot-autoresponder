@@ -19,9 +19,17 @@ class Config:
 
     def from_dict(self, json):
         self.base_url = json['base_url']
-        self.client_id = json['client_id']
-        self.client_secret = json['client_secret']
-        self.access_token = json['access_token']
+
+        def load_if_file(param):
+            if param + '_file' in json:
+                with open(json[param + '_file']) as f:
+                    return f.read().strip()
+            else:
+                return json[param]
+
+        self.client_id = load_if_file('client_id')
+        self.client_secret = load_if_file('client_secret')
+        self.access_token = load_if_file('access_token')
 
         self.admins = json['admins']
         self.message = json['message'] + ''.join(' @' + admin for admin in self.admins)
